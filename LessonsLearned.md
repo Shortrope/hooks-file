@@ -1,6 +1,7 @@
 # Hook File script notes
 
 ## 11/3/2018  Pair programing w William
+_Working on hook file script._
 
 ### 1. Getting multiple iterations of the same antlet_info in the `list_of_antlets`
 
@@ -37,7 +38,7 @@ LEGB Rule.
 - G, Global (module) — Names assigned at the top-level of a module file, or by executing a global statement in a def within the file.
 - B, Built-in (Python) — Names preassigned in the built-in names module : open,range,SyntaxError,...
 
-## 3. Regular Expressions
+### 3. Regular Expressions
 
     pattern = re.compile(r'regex')
     matches = pattern.finditer(text_to_search)
@@ -64,7 +65,7 @@ example:  phone number match:
 2: is the second group  
 3: is the third group  
 
-## 4. main function
+### 4. main function
 The special variable `__name__` 
 - contains the module name if run in the REPL
 - contains the string '__main__' if run from the command line
@@ -73,3 +74,12 @@ The special variable `__name__`
         main()
 
 By checking the `__name__` variable we can run the script on the cli or just import the functions for testing in the REPL
+
+## 11/10/2018  Pair programing w William
+_Working on hook file script._
+
+### 1. Commit changes when code works
+
+### 2. Python indentation
+- The first indentation is the model for the rest of the indentation of the block.  
+- If you use 3 spaces on the first line of a 'def' then the rest of the 'def' should use 3 spaces as well.
