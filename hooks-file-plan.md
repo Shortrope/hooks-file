@@ -3,10 +3,11 @@
 1. rollback feature
 1. validate config file syntax
 1. validate antlet_name, IPs
-1. validate enough info for each antlet
+1. validate antlet info is complete
 1. validate unique host_port
 1. reduce info needed. optional antlet_ip, antlet_type and host_ip
 1. display current configured host ports
+1. specify tcp, udp or both
 
 ## Get Port Forwarding Info
 Use a configuration file as the input to create the hooks files.
@@ -30,11 +31,11 @@ File: hooks.conf
     - can have multiple portmap lines
     - the hostport and antletport can be different
 
-The ideal:
+The ideal - onle three pieces of info required:
+
     antlet_name=mysql-db
     host_ipaddr=192.168.1.3  # will default to br0's IP if not present
-    portmap=2222:2222 # another port
-    portmap=3333:3333
+    portmap=2222:2222
 
 ## Auto Input
 ToDo:
@@ -62,6 +63,7 @@ Done:
 ---
 
 ## Help
+
     # create-hook-file --help  
     Usage: create-hook-files.py [options]
     Only edit the /etc/libvirt/hooks/hooks.conf configuration file. 
