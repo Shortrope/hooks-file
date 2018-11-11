@@ -18,8 +18,8 @@ File: hooks.conf
     antlet_type=lxc
     antlet_ipaddr=10.1.1.22
     host_ipaddr=192.168.1.3
-    portmap=2222:2222 # another port
-    portmap=3333:3333
+    portmap=2222:2222
+    portmap=...
 
 - antlet_name: must be the first item in the stanza
 - antlet_type: kvm or lxc
