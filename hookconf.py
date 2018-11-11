@@ -1,8 +1,12 @@
 #!/usr/bin/python3
 from pprint import pprint as pp
 import re
+import os
+import shutil
 
+hooks_dir = "./"
 hooks_conf_path = "./hooks.conf"
+#hooks_dir = "/etc/libvirt/hooks/"
 #hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
 #hooks_conf_path = "e:/_Projects/100/100-days-of-python/Projects/antsle hooks file/hooks.conf"
 
@@ -91,6 +95,14 @@ def create_case_statement(list_of_antlets, antlet_type):
 
     return case_statement
 
+def backup_hook_files(hooks_dir="/etc/libvirt/hooks/"):
+    # qemu exists
+    if os.path.isfile(hooks_dir + "qemu"):
+        shutil.copyfile(hooks_dir + 'qemu', hooks_dir + 'qemu.bak')
+    # lxc exists
+    if os.path.isfile(hooks_dir + "lxc"):
+        shutil.copyfile(hooks_dir + 'lxc', hooks_dir + 'lxc.bak')
+
 
 def write_hookfile(header_string, case_statment, footer_string):
     with open("./qemu", "w") as f:
@@ -98,9 +110,6 @@ def write_hookfile(header_string, case_statment, footer_string):
 
 
 def write_hook_file(case_statement, antlet_type):
-
-    hooks_dir = "./"
-    #hooks_dir = "/etc/libvirt/hooks/"
 
     if antlet_type == "kvm":
         hook_file_path = hooks_dir + "qemu"
@@ -148,14 +157,13 @@ fi
 
 
 def main():
-
-    clean_data = clean_conf_data(hooks_conf_path)
-    antlet_data_list = get_antlet_data(clean_data)
+    cleaned_data = clean_conf_data(hooks_conf_path)
+    antlet_data_list = get_antlet_data(cleaned_data)
     lxc_case_statement = create_case_statement(antlet_data_list, "lxc")
     kvm_case_statement = create_case_statement(antlet_data_list, "kvm")
+    backup_hook_files(hooks_dir)
     write_hook_file(lxc_case_statement, "lxc")
     write_hook_file(kvm_case_statement, "kvm")
-
 
 
 # Only run the main() functon if run from the cli. 
