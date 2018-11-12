@@ -96,11 +96,11 @@ def backup_hook_files(hooks_dir):
     # qemu exists
     if os.path.isfile(hooks_dir + "qemu"):
         shutil.copyfile(hooks_dir + 'qemu', hooks_dir + 'qemu.bak')
-        os.chmod(hooks_dir + "qemu", 0x755)
+        os.chmod(hooks_dir + "qemu.bak", 0o755)
     # lxc exists
     if os.path.isfile(hooks_dir + "lxc"):
         shutil.copyfile(hooks_dir + 'lxc', hooks_dir + 'lxc.bak')
-        os.chmod(hooks_dir + "lxc", 0x755)
+        os.chmod(hooks_dir + "lxc.bak", 0o755)
 
 
 def write_hook_file(case_statement, antlet_type):
@@ -149,7 +149,7 @@ fi
     with open(hook_file_path, 'w') as hook_file:
         hook_file.write(header_string + case_statement + footer_string)
 
-    os.chmod(hook_file_path, 0x755)
+    os.chmod(hook_file_path, 0o755)
 
 
 def main():
