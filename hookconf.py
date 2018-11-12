@@ -8,10 +8,9 @@ hooks_dir = "./"
 hooks_conf_path = "./hooks.conf"
 #hooks_dir = "/etc/libvirt/hooks/"
 #hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
-#hooks_conf_path = "e:/_Projects/100/100-days-of-python/Projects/antsle hooks file/hooks.conf"
 
 
-def clean_conf_data(hooks_conf_path="/etc/libvirt/hooks/hooks.conf"):
+def clean_conf_data(hooks_conf_path):
     cleaned_data = []
     empty_line_pattern = re.compile(r'^\s*$')
     
@@ -95,7 +94,7 @@ def create_case_statement(list_of_antlets, antlet_type):
 
     return case_statement
 
-def backup_hook_files(hooks_dir="/etc/libvirt/hooks/"):
+def backup_hook_files(hooks_dir):
     # qemu exists
     if os.path.isfile(hooks_dir + "qemu"):
         shutil.copyfile(hooks_dir + 'qemu', hooks_dir + 'qemu.bak')
