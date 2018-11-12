@@ -1,13 +1,12 @@
 #!/usr/bin/python3
-from pprint import pprint as pp
 import re
 import os
 import shutil
 
-hooks_dir = "./"
-hooks_conf_path = "./hooks.conf"
-#hooks_dir = "/etc/libvirt/hooks/"
-#hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
+#hooks_dir = "./"
+#hooks_conf_path = "./hooks.conf"
+hooks_dir = "/etc/libvirt/hooks/"
+hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
 
 
 def clean_conf_data(hooks_conf_path):
@@ -37,8 +36,6 @@ def clean_conf_data(hooks_conf_path):
     }
 
     '''
-
-
 def get_antlet_data(cleaned_data):
     list_of_antlets = []
     antlet_info = dict()
@@ -94,18 +91,16 @@ def create_case_statement(list_of_antlets, antlet_type):
 
     return case_statement
 
+
 def backup_hook_files(hooks_dir):
     # qemu exists
     if os.path.isfile(hooks_dir + "qemu"):
         shutil.copyfile(hooks_dir + 'qemu', hooks_dir + 'qemu.bak')
+        os.chmod(hooks_dir + "qemu", 0x755)
     # lxc exists
     if os.path.isfile(hooks_dir + "lxc"):
         shutil.copyfile(hooks_dir + 'lxc', hooks_dir + 'lxc.bak')
-
-
-def write_hookfile(header_string, case_statment, footer_string):
-    with open("./qemu", "w") as f:
-        f.write(header_string + case_statment + footer_string)
+        os.chmod(hooks_dir + "lxc", 0x755)
 
 
 def write_hook_file(case_statement, antlet_type):
@@ -154,6 +149,8 @@ fi
     with open(hook_file_path, 'w') as hook_file:
         hook_file.write(header_string + case_statement + footer_string)
 
+    os.chmod(hook_file_path, 0x755)
+
 
 def main():
     cleaned_data = clean_conf_data(hooks_conf_path)
@@ -165,7 +162,5 @@ def main():
     write_hook_file(kvm_case_statement, "kvm")
 
 
-# Only run the main() functon if run from the cli. 
-# Do not run main() if importing in the REPL 
 if __name__ == "__main__":
     main()
