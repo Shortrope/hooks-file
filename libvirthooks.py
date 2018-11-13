@@ -1,15 +1,34 @@
 #!/usr/bin/python3
+"""Creates the libvirt hooks files, 'lxc' and 'qemu', using info provided in the 'hooks.conf' configuration file.
+
+Useage:
+    The user should only edit the hooks.conf file. Not the hook files themselves.
+
+    This script reads the file, 'hooks.conf', located in /etc/libvirt/hooks/
+    Creates a backup of the current 'lxc' and 'qemu' hook files - if they exist
+    Then re-writes both the 'lxc' and 'qemu' hook files and makes them executable
+"""
+
 import re
 import os
+import sys
 import shutil
 
-#hooks_dir = "./"
-#hooks_conf_path = "./hooks.conf"
-hooks_dir = "/etc/libvirt/hooks/"
-hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
+hooks_dir = "./"
+hooks_conf_path = "./hooks.conf"
+#hooks_dir = "/etc/libvirt/hooks/"
+#hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
 
 
-def clean_conf_data(hooks_conf_path):
+def clean_conf_data():
+    """Read 'hooks.conf' flie and remove all comments and blank lines
+    
+    Args:
+        hooks_conf_path: The path to the hooks.conf file
+        
+    Returns:
+        A list contianing each configuration line from the hooks.conf file
+    """
     cleaned_data = []
     empty_line_pattern = re.compile(r'^\s*$')
     
@@ -24,19 +43,24 @@ def clean_conf_data(hooks_conf_path):
     return cleaned_data
 
 
-    '''
-    Example of Created Dict
-    {
-        "antlet_name":"ansible",
-        "antlet_type":"kvm", 
-        "antlet_ipaddr":"10.1.1.33",
-        "host_ipaddr":"192.168.1.3",
-        "host_ports":" '3333' '4444' "
-        "antlet_ports":" '3333' '4444' "
-    }
-
-    '''
 def get_antlet_data(cleaned_data):
+    """Creates a list of dictionaries, each of which contains the port forwarding info of each stanza in the hooks.conf file.
+
+    Args:
+        cleaned_data: A list of lines of portforwarding info
+    
+    Returns:
+        A list of dictionaries of port forwarding info
+        Example dictionary of port forwarding info:
+        {
+            "antlet_name":"ansible",
+            "antlet_type":"kvm", 
+            "antlet_ipaddr":"10.1.1.33",
+            "host_ipaddr":"192.168.1.3",
+            "host_ports":" '3333' '4444' "
+            "antlet_ports":" '3333' '4444' "
+        }
+    """
     list_of_antlets = []
     antlet_info = dict()
 
@@ -72,6 +96,15 @@ def get_antlet_data(cleaned_data):
 
 
 def create_case_statement(list_of_antlets, antlet_type):
+    """Creates the case statement used in the hook file.
+
+    Args:
+        list_of_antlets: List of dictionaries containing each antlets port forwarding info
+        antlet_type: A string - 'lxc' or 'kvm'
+    
+    Returns:
+        A string of the case statement.
+    """
     case_statement = "case $antlet_name in\n"
     case_statment_string = ""
 
@@ -92,7 +125,12 @@ def create_case_statement(list_of_antlets, antlet_type):
     return case_statement
 
 
-def backup_hook_files(hooks_dir):
+def backup_hook_files():
+    """Create a backup of the existing lxc and qemu files if they exist.
+
+    Args:
+        hooks_dir: String containing the path to the hooks directory
+    """
     # qemu exists
     if os.path.isfile(hooks_dir + "qemu"):
         shutil.copyfile(hooks_dir + 'qemu', hooks_dir + 'qemu.bak')
@@ -104,7 +142,12 @@ def backup_hook_files(hooks_dir):
 
 
 def write_hook_file(case_statement, antlet_type):
+    """Create the hook file.
 
+    Args:
+        case_statement: String containing the case statement
+        antlet_type: String - 'lxc' or 'kvm'
+    """
     if antlet_type == "kvm":
         hook_file_path = hooks_dir + "qemu"
     else:
@@ -146,18 +189,24 @@ if [ "$action" = "start" ] || [ "$action" = "reconnect" ]; then
 fi
 
 '''
-    with open(hook_file_path, 'w') as hook_file:
-        hook_file.write(header_string + case_statement + footer_string)
 
-    os.chmod(hook_file_path, 0o755)
+    try:
+        with open(hook_file_path, 'w') as hook_file:
+            hook_file.write(header_string + case_statement + footer_string)
+        os.chmod(hook_file_path, 0o755)
+    except:
+        print("Problem with {}".format(hook_file_path))
+        sys.exit()
+
 
 
 def main():
-    cleaned_data = clean_conf_data(hooks_conf_path)
+    """Run all the steps to create the hooks files from the hooks.conf file"""
+    cleaned_data = clean_conf_data()
     antlet_data_list = get_antlet_data(cleaned_data)
     lxc_case_statement = create_case_statement(antlet_data_list, "lxc")
     kvm_case_statement = create_case_statement(antlet_data_list, "kvm")
-    backup_hook_files(hooks_dir)
+    backup_hook_files()
     write_hook_file(lxc_case_statement, "lxc")
     write_hook_file(kvm_case_statement, "kvm")
 

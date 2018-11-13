@@ -1,6 +1,5 @@
 # Create Hooks file for antsle
-1. create hook files from config file
-1. rollback feature
+1. try..catch file operations
 1. validate config file syntax
 1. validate antlet_name, IPs
 1. validate antlet info is complete
@@ -8,6 +7,11 @@
 1. reduce info needed. optional antlet_ip, antlet_type and host_ip
 1. display current configured host ports
 1. specify tcp, udp or both
+
+Done:
+1. _create hook files from config file_
+1. _backup hook files before writing new files_
+1. _comment functions - for help(func_name)_
 
 ## Get Port Forwarding Info
 Use a configuration file as the input to create the hooks files.
