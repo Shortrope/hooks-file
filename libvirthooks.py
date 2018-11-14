@@ -14,18 +14,15 @@ import os
 import sys
 import shutil
 
-hooks_dir = "./"
-hooks_conf_path = "./hooks.conf"
-#hooks_dir = "/etc/libvirt/hooks/"
-#hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
+#hooks_dir = "./"
+#hooks_conf_path = "./hooks.conf"
+hooks_dir = "/etc/libvirt/hooks/"
+hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
 
 
 def clean_conf_data():
     """Read 'hooks.conf' flie and remove all comments and blank lines
     
-    Args:
-        hooks_conf_path: The path to the hooks.conf file
-        
     Returns:
         A list contianing each configuration line from the hooks.conf file
     """
@@ -126,11 +123,7 @@ def create_case_statement(list_of_antlets, antlet_type):
 
 
 def backup_hook_files():
-    """Create a backup of the existing lxc and qemu files if they exist.
-
-    Args:
-        hooks_dir: String containing the path to the hooks directory
-    """
+    """Create a backup of the existing lxc and qemu files if they exist."""
     # qemu exists
     if os.path.isfile(hooks_dir + "qemu"):
         shutil.copyfile(hooks_dir + 'qemu', hooks_dir + 'qemu.bak')
