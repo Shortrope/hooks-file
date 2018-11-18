@@ -12,6 +12,7 @@ Done:
 1. _create hook files from config file_
 1. _backup hook files before writing new files_
 1. _comment functions - for help(func_name)_
+1. _option to return json string_
 
 ## Get Port Forwarding Info
 Use a configuration file as the input to create the hooks files.
