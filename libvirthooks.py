@@ -160,7 +160,9 @@ action=$2
 '''
 
     footer_string = '''
-echo `date` hook/${antlet_type} "antlet ${antlet_name}: $action" >>/var/log/libvirt/hook.log
+if [ "$action" = "stopped" ] || [ "$action" = "reconnect" ] || [ "$action" = "start" ]; then
+    echo `date` hook/${antlet_type} "antlet ${antlet_name}: $action" >>/var/log/libvirt/hook.log
+fi
 
 length=$(( ${#host_ports[@]} - 1 ))
 if [ "$action" = "stopped" ] || [ "$action" = "reconnect" ]; then
