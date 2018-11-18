@@ -83,3 +83,12 @@ _Working on hook file script._
 ### 2. Python indentation
 - The first indentation is the model for the rest of the indentation of the block.  
 - If you use 3 spaces on the first line of a 'def' then the rest of the 'def' should use 3 spaces as well.
+
+## 11/17/18
+### 1. Be disciplined with commits and work tasks
+While working on a specific task, I have a habbit of making many unrelated changes. Then commiting all of it in one commit.  
+Pick something to work on and commit only the things related to that task.  
+This will keep the git log organized.  
+This will make rolling back to an earlier commit easier.  
+This will give more clairity on the progress of the project  
+
