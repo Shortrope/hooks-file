@@ -167,7 +167,7 @@ fi
 length=$(( ${#host_ports[@]} - 1 ))
 if [ "$action" = "stopped" ] || [ "$action" = "reconnect" ]; then
   for i in `seq 0 $length`; do
-    echo "`date` hook/${antlet_type} antlet $antlet_name Closing port ${host_ports[$i]} -> ${antlet_ports[$i]} " >>/var/log/libvirt/hook.log
+    echo "`date` hook/${antlet_type} antlet ${antlet_name}: Closing port ${host_ports[$i]} -> ${antlet_ports[$i]} " >>/var/log/libvirt/hook.log
     iptables -t nat -D PREROUTING -d ${host_ipaddr} -p udp --dport ${host_ports[$i]} -j DNAT --to ${antlet_ipaddr}:${antlet_ports[$i]}
     iptables -D FORWARD -d ${antlet_ipaddr}/32 -p udp -m state --state NEW,ESTABLISHED,RELATED --dport ${antlet_ports[$i]} -j ACCEPT
     iptables -t nat -D PREROUTING -d ${host_ipaddr} -p tcp --dport ${host_ports[$i]} -j DNAT --to ${antlet_ipaddr}:${antlet_ports[$i]}
@@ -176,7 +176,7 @@ if [ "$action" = "stopped" ] || [ "$action" = "reconnect" ]; then
 fi
 if [ "$action" = "start" ] || [ "$action" = "reconnect" ]; then
   for i in `seq 0 $length`; do
-    echo "`date` hook/${antlet_type} antlet $antlet_name Mapping port ${host_ports[$i]} -> ${antlet_ports[$i]} " >>/var/log/libvirt/hook.log
+    echo "`date` hook/${antlet_type} antlet ${antlet_name}: Mapping port ${host_ports[$i]} -> ${antlet_ports[$i]} " >>/var/log/libvirt/hook.log
     iptables -t nat -A PREROUTING -d ${host_ipaddr} -p tcp --dport ${host_ports[$i]} -j DNAT --to ${antlet_ipaddr}:${antlet_ports[$i]}
     iptables -I FORWARD -d ${antlet_ipaddr}/32 -p tcp -m state --state NEW,ESTABLISHED,RELATED --dport ${antlet_ports[$i]} -j ACCEPT
     iptables -t nat -A PREROUTING -d ${host_ipaddr} -p udp --dport ${host_ports[$i]} -j DNAT --to ${antlet_ipaddr}:${antlet_ports[$i]}
