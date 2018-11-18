@@ -9,10 +9,11 @@ Useage:
     Then re-writes both the 'lxc' and 'qemu' hook files and makes them executable
 """
 
-import re
+import json
 import os
-import sys
+import re
 import shutil
+import sys
 
 #hooks_dir = "./"
 #hooks_conf_path = "./hooks.conf"
@@ -193,10 +194,20 @@ fi
 
 
 
-def main():
-    """Run all the steps to create the hooks files from the hooks.conf file"""
+def main(return_json=False):
+    """Either create the hooks files or return a json string derived from the hooks.conf file
+    
+    Args:
+        return_json: Boolean, if True, return a json string. If False, create the hooks files. default=False
+    """
+
     cleaned_data = clean_conf_data()
     antlet_data_list = get_antlet_data(cleaned_data)
+
+    if return_json == True:
+        print(json.dumps(antlet_data_list, separators=(',', ':')))
+        return
+
     lxc_case_statement = create_case_statement(antlet_data_list, "lxc")
     kvm_case_statement = create_case_statement(antlet_data_list, "kvm")
     backup_hook_files()
@@ -205,4 +216,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    return_json = False
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '--return-json':
+            return_json = True
+    main(return_json)
