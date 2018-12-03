@@ -1,12 +1,18 @@
 #!/usr/bin/python3
-"""Creates the libvirt hooks files, 'lxc' and 'qemu', using info provided in the 'hooks.conf' configuration file.
+"""This script will either create the libvirt hooks files, 'lxc' and 'qemu', or return
+a json string containing the hook file info derived from the hooks.conf file.
 
 Useage:
+    libvirthooks [--return-json]
+    
     The user should only edit the hooks.conf file. Not the hook files themselves.
 
-    This script reads the file, 'hooks.conf', located in /etc/libvirt/hooks/
-    Creates a backup of the current 'lxc' and 'qemu' hook files - if they exist
-    Then re-writes both the 'lxc' and 'qemu' hook files and makes them executable
+    This script reads the file, 'hooks.conf', located in /etc/libvirt/hooks/.
+    Creates a backup of the current 'lxc' and 'qemu' hook files if they exist.
+    Then re-writes both the 'lxc' and 'qemu' hook files and makes them executable.
+    
+    --return-json
+            Returns a json string containing the hook file info. Hook files are not created.
 """
 
 import json
