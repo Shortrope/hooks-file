@@ -15,16 +15,17 @@ Useage:
             Returns a json string containing the hook file info. Hook files are not created.
 """
 
+import argparse
 import json
 import os
 import re
 import shutil
 import sys
 
-#hooks_dir = "./"
-#hooks_conf_path = "./hooks.conf"
-hooks_dir = "/etc/libvirt/hooks/"
-hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
+hooks_dir = "./"
+hooks_conf_path = "./hooks.conf"
+#hooks_dir = "/etc/libvirt/hooks/"
+#hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
 
 
 def clean_conf_data():
@@ -202,17 +203,20 @@ fi
 
 
 
-def main(return_json=False):
+def main(file, return_json):
     """Either create the hooks files or return a json string derived from the hooks.conf file
     
     Args:
         return_json: Boolean, if True, return a json string. If False, create the hooks files. default=False
     """
 
+    global hooks_conf_path
+    hooks_conf_path = file
+
     cleaned_data = clean_conf_data()
     antlet_data_list = get_antlet_data(cleaned_data)
 
-    if return_json == True:
+    if return_json:
         print(json.dumps(antlet_data_list, separators=(',', ':')))
         return
 
@@ -224,8 +228,12 @@ def main(return_json=False):
 
 
 if __name__ == "__main__":
-    return_json = False
-    if len(sys.argv) > 1:
-        if sys.argv[1] == '--return-json':
-            return_json = True
-    main(return_json)
+
+    parser = argparse.ArgumentParser(description="Parse the hooks configuration file and create the hooks files or return in json format")
+    parser.add_argument("-f", "--file", help="specify config file path.")
+    parser.add_argument("-j", "--return-json", action="store_true", help="return a json string. Hook files are not created.")
+    args = parser.parse_args()
+
+    print(args)
+    print(args.file, args.return_json)
+    main(args.file, args.return_json)
