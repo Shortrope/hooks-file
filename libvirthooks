@@ -22,10 +22,11 @@ import re
 import shutil
 import sys
 
-hooks_dir = "./"
-hooks_conf_path = "./hooks.conf"
-#hooks_dir = "/etc/libvirt/hooks/"
-#hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
+#For testing
+  #hooks_dir = "./"
+  #hooks_conf_path = "./hooks.conf"
+hooks_dir = "/etc/libvirt/hooks/"
+hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
 
 
 def clean_conf_data():
@@ -210,8 +211,9 @@ def main(file, return_json):
         return_json: Boolean, if True, return a json string. If False, create the hooks files. default=False
     """
 
-    global hooks_conf_path
-    hooks_conf_path = file
+    if file:
+        global hooks_conf_path
+        hooks_conf_path = file
 
     cleaned_data = clean_conf_data()
     antlet_data_list = get_antlet_data(cleaned_data)
@@ -229,11 +231,9 @@ def main(file, return_json):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Parse the hooks configuration file and create the hooks files or return in json format")
-    parser.add_argument("-f", "--file", help="specify config file path.")
+    parser = argparse.ArgumentParser(description="Parse the hooks configuration file and create the lxc and qemu hooks files")
+    parser.add_argument("-f", "--file", help="specify config file path. Default is /etc/libvirt/hooks/hooks.conf")
     parser.add_argument("-j", "--return-json", action="store_true", help="return a json string. Hook files are not created.")
     args = parser.parse_args()
 
-    print(args)
-    print(args.file, args.return_json)
     main(args.file, args.return_json)
