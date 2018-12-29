@@ -29,6 +29,15 @@ hooks_dir = "/etc/libvirt/hooks/"
 hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
 
 
+def create_parser():
+    parser = argparse.ArgumentParser(description='Parse the hooks configuration file and create the lxc and qemu hooks files.')
+    parser.add_argument('-c', '--create', action='store_true', help='Create the hooks files using /etc/libvirt/hooks/hooks.conf. Specify different file with the -f option.')
+    parser.add_argument('-f', '--file', metavar='path', help='specify different config file path. Default is /etc/libvirt/hooks/hooks.conf.')
+    parser.add_argument('-j', '--json', action='store_true', help='return a json string. Hook files are not created.')
+
+    return parser
+
+
 def clean_conf_data():
     """Read 'hooks.conf' flie and remove all comments and blank lines
     
@@ -231,9 +240,7 @@ def main(file, return_json):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Parse the hooks configuration file and create the lxc and qemu hooks files")
-    parser.add_argument("-f", "--file", help="specify config file path. Default is /etc/libvirt/hooks/hooks.conf")
-    parser.add_argument("-j", "--return-json", action="store_true", help="return a json string. Hook files are not created.")
+    parser = create_parser()
     args = parser.parse_args()
 
     main(args.file, args.return_json)
