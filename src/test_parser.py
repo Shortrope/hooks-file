@@ -12,11 +12,10 @@ class TestLibvirthooks(unittest.TestCase):
             self.assertTrue(args.create)
 
 
-    def test_parser_json_option(self):
+    def test_parser_without_create_option(self):
         parser = create_parser()
-        for option in ('-j', '--json'):
-            args = parser.parse_args([option])
-            self.assertTrue(args.json)
+        args = parser.parse_args([])
+        self.assertFalse(args.create)
 
 
     def test_parser_file_option(self):
@@ -25,11 +24,25 @@ class TestLibvirthooks(unittest.TestCase):
             args = parser.parse_args([option, '/path/to/file'])
             self.assertEqual(args.file, '/path/to/file')
 
+
     def test_parser_file_option_without_path(self):
         parser = create_parser()
         for option in ('-f', '--file'):
             with self.assertRaises(SystemExit):
                 parser.parse_args([option])
+                
+
+    def test_parser_json_option(self):
+        parser = create_parser()
+        for option in ('-j', '--json'):
+            args = parser.parse_args([option])
+            self.assertTrue(args.json)
+
+    
+    def test_parser_without_json_option(self):
+        parser = create_parser()
+        args = parser.parse_args([])
+        self.assertFalse(args.json)
 
 
 if __name__ == '__main__':
