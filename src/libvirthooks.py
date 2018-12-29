@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """This script will do one of three things:
 1. Create the libvirt hooks files, 'lxc' and 'qemu'. 
 2. return a json string containing the port forwarding info.
@@ -278,9 +278,17 @@ def main():
             print('[]')
             sys.exit()
 
-    if config_file:
-        global hooks_conf_path
-        hooks_conf_path = config_file
+    if config_file and config_file[:1] == '/':
+        if os.path.isfile(config_file):
+            global hooks_conf_path
+            hooks_conf_path = config_file
+        else:
+            print(config_file + " does not exist!")
+            sys.exit(1)
+    elif config_file is not None:
+        print("-f, --file: requires absolute path to the config file.")
+        sys.exit(1)
+
 
     cleaned_data = clean_conf_data()
     antlet_data_list = get_antlet_data(cleaned_data)
