@@ -30,10 +30,10 @@ hooks_conf_path = "/etc/libvirt/hooks/hooks.conf"
 
 
 def create_parser():
-    parser = argparse.ArgumentParser(description='Parse the hooks configuration file and create the lxc and qemu hooks files.')
-    parser.add_argument('-c', '--create', action='store_true', help='Create the hooks files using /etc/libvirt/hooks/hooks.conf. Specify different file with the -f option.')
+    parser = argparse.ArgumentParser(description='Parse the hooks configuration file and create the lxc and qemu hooks files. If no arguments are given, the contents of the configuration file for the current hook files are printed to the screen.')
+    parser.add_argument('-c', '--create', action='store_true', help='Create the hooks files using /etc/libvirt/hooks/hooks.conf. Specify a different configuration file with the -f option.')
     parser.add_argument('-f', '--file', metavar='path', help='specify different config file path. Default is /etc/libvirt/hooks/hooks.conf.')
-    parser.add_argument('-j', '--json', action='store_true', help='return a json string. Hook files are not created.')
+    parser.add_argument('-j', '--json', action='store_true', help='return a json string representing the current configuration.')
 
     return parser
 
@@ -212,16 +212,45 @@ fi
         print("Problem with {}".format(hook_file_path))
         sys.exit()
 
-def get_origin_config_file():
-    return '/path/to/config_file'
+
+def get_origin_config_file_path():
+    """
+    """
+    regex_config_path_comment = re.compile(r'^## CONFIGFILE: ')
+    # qemu exists
+    if os.path.isfile(hooks_dir + "lxc"):
+        with open(hooks_dir + "lxc", 'r') as f:
+            for line in f:
+                if regex_config_path_comment.search(line) is not None:
+                    return line.partition(':')[2].strip()
+                    
+    elif os.path.isfile(hooks_dir + "qemu"):
+        with open(hooks_dir + "qemu", 'r') as f:
+            for line in f:
+                if regex_config_path_comment.search(line) is not None:
+                    return line.partition(':')[2].strip()
+    else:
+        return None
+
 
 def print_current_config():
-    pass
+    config_file = get_origin_config_file_path()
+    if config_file is None:
+        print("Neither /etc/libvirt/hooks/lxc nor qemu exist. No custom ports currently forwarding.")
+    else:
+        message = "The existing hook files were created from: {}".format(config_file)
+        print('-' * len(message))
+        print(message)
+        print('-' * len(message) + '\n')
+        with open(config_file, 'r') as f:
+            print(f.read())
 
 
 def main():
-    """Either create the hooks files or return a json string derived from the hooks.conf file
-       return_json: Boolean, if True, return a json string. If False, create the hooks files. default=False
+    """Does one of three things.
+    1. Create the hooks files.
+    2. Return a json string.
+    3. Print the current config file contents
     """
     args = create_parser().parse_args()
     config_file = args.file
@@ -229,7 +258,10 @@ def main():
     create = args.create
 
     if return_json:
-        config_file = get_origin_config_file()
+        config_file = get_origin_config_file_path()
+        if config_file is None:
+            print('[]')
+            sys.exit()
 
     if config_file:
         global hooks_conf_path
@@ -242,8 +274,6 @@ def main():
         print(json.dumps(antlet_data_list, separators=(',', ':')))
         return
     elif create:
-        print("hooks config path: " + hooks_conf_path)
-        print("hooks dir: " + hooks_dir)
         lxc_case_statement = create_case_statement(antlet_data_list, "lxc")
         kvm_case_statement = create_case_statement(antlet_data_list, "kvm")
         backup_hook_files()
