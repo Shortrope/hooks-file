@@ -1,18 +1,31 @@
 #!/usr/bin/python3
-"""This script will either create the libvirt hooks files, 'lxc' and 'qemu', or return
-a json string containing the hook file info derived from the hooks.conf file.
+"""This script will do one of three things:
+1. Create the libvirt hooks files, 'lxc' and 'qemu'. 
+2. return a json string containing the port forwarding info.
+3. Print the current configuration file contents.
+
+The user should only edit the hooks.conf file. Not the hook files themselves.
+
+The default configuration file is: /etc/libvirt/hooks/hooks.conf.
+A backup of the current 'lxc' and 'qemu' hook files will be created if they exist.
+Both the 'lxc' and 'qemu' hook files will be re-created and made executable.
+
+If no arguments are given, the contents of the configuration file for the current
+hook files are printed to the screen.
 
 Useage:
-    libvirthooks [--return-json]
-    
-    The user should only edit the hooks.conf file. Not the hook files themselves.
+  libvirthooks [-h] [-c] [-f path] [-j]-json]
 
-    This script reads the file, 'hooks.conf', located in /etc/libvirt/hooks/.
-    Creates a backup of the current 'lxc' and 'qemu' hook files if they exist.
-    Then re-writes both the 'lxc' and 'qemu' hook files and makes them executable.
+optional arguments:
+  -h, --help            show this help message and exit
+  -c, --create          Create the hooks files using
+                        /etc/libvirt/hooks/hooks.conf. Specify a different
+                        configuration file with the -f option.
+  -f path, --file path  specify different config file path. Default is
+                        /etc/libvirt/hooks/hooks.conf.
+  -j, --json            return a json string representing the current
+                        configuration.
     
-    --return-json
-            Returns a json string containing the hook file info. Hook files are not created.
 """
 
 import argparse
@@ -214,7 +227,7 @@ fi
 
 
 def get_origin_config_file_path():
-    """
+    """Get the config file path from the lxc or qemu hook file if they exist. Else return None.
     """
     regex_config_path_comment = re.compile(r'^## CONFIGFILE: ')
     # qemu exists
@@ -234,6 +247,8 @@ def get_origin_config_file_path():
 
 
 def print_current_config():
+    """Print the current configuration file contents to screen.
+    """
     config_file = get_origin_config_file_path()
     if config_file is None:
         print("Neither /etc/libvirt/hooks/lxc nor qemu exist. No custom ports currently forwarding.")
