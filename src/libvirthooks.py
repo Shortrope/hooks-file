@@ -213,12 +213,13 @@ fi
 
 
 
-def main(file, return_json):
+def main():
     """Either create the hooks files or return a json string derived from the hooks.conf file
-    
-    Args:
-        return_json: Boolean, if True, return a json string. If False, create the hooks files. default=False
+       return_json: Boolean, if True, return a json string. If False, create the hooks files. default=False
     """
+    args = create_parser().parse_args()
+    file = args.file
+    return_json = args.json
 
     if file:
         global hooks_conf_path
@@ -239,8 +240,4 @@ def main(file, return_json):
 
 
 if __name__ == "__main__":
-
-    parser = create_parser()
-    args = parser.parse_args()
-
-    main(args.file, args.return_json)
+    main()
